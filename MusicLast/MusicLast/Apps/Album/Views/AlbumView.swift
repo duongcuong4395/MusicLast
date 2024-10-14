@@ -10,7 +10,7 @@ import SwiftUI
 struct AlbumView: View {
     @EnvironmentObject var appVM: AppViewModel
     @EnvironmentObject var albumVM: AlbumViewModel
-    @Environment(\.openURL) var openURL
+    
     
     var body: some View {
         VStack {
@@ -19,9 +19,6 @@ struct AlbumView: View {
                     ForEach(albumVM.models, id: \.name) { album in
                         album.getItemView {
                             EmptyView()
-                        } playURL: {
-                            
-                            openURL(URL(string: album.url ?? "")!)
                         }
                     }
                 }

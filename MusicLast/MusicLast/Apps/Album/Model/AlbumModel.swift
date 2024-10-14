@@ -56,32 +56,8 @@ import Kingfisher
 extension AlbumModel {
     
     @MainActor
-    func getItemView(with optionVIew: @escaping () -> some View, playURL: @escaping () -> Void) -> some View {
-        HStack(alignment: .top) {
-             KFImage(URL(string: image[2].text ?? ""))
-                .placeholder { progress in
-                    RoundedRectangle(cornerRadius: 15)
-                        .fadeInEffect(duration: 100, isLoop: true)
-                }
-                .resizable()
-                .scaledToFill()
-                .clipShape(RoundedRectangle(cornerRadius: 15))
-                .frame(width: 100, height: 100)
-                .overlay {
-                    Image(systemName: "play.circle")
-                        .font(.title2)
-                }
-                .onTapGesture {
-                    playURL()
-                }
-            VStack(alignment: .leading) {
-                Text(name)
-                    .font(.system(size: 14, weight: .bold, design: .serif))
-                Text(artist)
-                    .font(.caption)
-            }
-            Spacer()
-        }
+    func getItemView(with optionVIew: @escaping () -> some View) -> some View {
+        AlbumItemView(model: self)
     }
 }
 
@@ -108,9 +84,11 @@ enum Size: String, Codable {
 // MARK: - Attr
 struct Attr: Codable {
     var attrFor: String?
-
+    var rank: Int?
+    
     enum CodingKeys: String, CodingKey {
         case attrFor = "for"
+        case rank = "rank"
     }
 }
 
@@ -129,4 +107,43 @@ struct OpensearchQuery: Codable {
 
 
 
-
+struct AlbumItemView: View {
+    @StateObject var albumDetailVM = AlbumDetailViewModel()
+    
+    @Environment(\.openURL) var openURL
+    var model: AlbumModel
+    @StateObject var modelDetailVM = AlbumDetailViewModel()
+    var body: some View {
+        HStack(alignment: .top) {
+            KFImage(URL(string: model.image[2].text ?? ""))
+                .placeholder { progress in
+                    RoundedRectangle(cornerRadius: 15)
+                        .fadeInEffect(duration: 100, isLoop: true)
+                }
+                .resizable()
+                .scaledToFill()
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .frame(width: 100, height: 100)
+                .overlay {
+                    Image(systemName: "play.circle")
+                        .font(.title2)
+                }
+                .onTapGesture {
+                    openURL(URL(string: model.url ?? "")!)
+                }
+            VStack(alignment: .leading) {
+                Text(model.name)
+                    .font(.system(size: 14, weight: .bold, design: .serif))
+                Text(model.artist)
+                    .font(.caption)
+                if let detail = modelDetailVM.model {
+                    AlbumDetailItemView(model: detail)
+                }
+            }
+            Spacer()
+        }
+        .onAppear{
+            modelDetailVM.getInfor(by: model.name, and: model.artist)
+        }
+    }
+}

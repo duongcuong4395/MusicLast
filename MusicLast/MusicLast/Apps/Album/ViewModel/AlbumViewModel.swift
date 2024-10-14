@@ -12,6 +12,8 @@ class AlbumViewModel: ObservableObject {
     @Published var models: [AlbumModel] = []
 }
 
+
+
 import SwiftUI
 
 extension AlbumViewModel: MusicLastAPIEvent {
@@ -28,5 +30,26 @@ extension AlbumViewModel: MusicLastAPIEvent {
     }
 }
 
+
+
+class AlbumDetailViewModel: ObservableObject {
+    @Published var model: AlbumDetailModel?
+}
+
+extension AlbumDetailViewModel : MusicLastAPIEvent{
+    func getInfor(by album: String, and artist: String? = "") {
+        Task {
+            let response = try await self.getInforAlbum(by: album, and: artist ?? "") as AlbumDetailResponse
+            DispatchQueue.main.async {
+                withAnimation {
+                    self.model = response.album
+                    print("=== getInfor",album, artist, response.album?.tags ?? [])
+                }
+            }
+            
+        }
+        
+    }
+}
 
 
