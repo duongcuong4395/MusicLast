@@ -86,13 +86,12 @@ struct ArtistDetailItemView: View {
                 , let artists = similar.artist
                 , artists.count > 0 {
                 HStack(spacing: 5) {
-                    Text("Similar To:")
-                        .font(.caption.bold())
+                    Image(systemName: "person.line.dotted.person.fill")
+                        .font(.title)
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack {
                             ForEach(artists, id: \.name) { similar in
                                 VStack {
-                                    
                                     KFImage(URL(string: similar.images[2].text ?? ""))
                                         .placeholder { progress in
                                             Circle()
@@ -103,6 +102,7 @@ struct ArtistDetailItemView: View {
                                         
                                         .clipShape(Circle())
                                         .frame(width: 30, height: 30)
+                                        .shadow(color: .pink, radius: 5, x: 5, y: 5)
                                         .onTapGesture {
                                             if let url = URL(string: similar.url ?? "") {
                                                 openURL(url)

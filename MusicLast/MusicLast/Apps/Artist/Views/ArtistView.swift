@@ -20,6 +20,7 @@ struct ArtistView: View {
                     ForEach(artistVM.models, id: \.name) { artist in
                         artist.getItemView {
                             getOptionView(with: artist).toAnyView()
+                                
                         }
                         .matchedGeometryEffect(id: "Artist_\(artist.name)", in: animation)
                     }
@@ -29,11 +30,16 @@ struct ArtistView: View {
     }
     
     func getOptionView(with artist: ArtistModel) -> some View {
-        HStack(spacing: 20) {
+        HStack(spacing: 25) {
             Image(systemName: "heart")
                 .font(.title2)
-            Image(systemName: "ellipsis")
+                
+                .shadow(color: .pink, radius: 3, x: 3, y: 3)
+            Image(systemName: "ellipsis.circle")
                 .font(.title2)
+                
+                .shadow(color: .pink, radius: 3, x: 3, y: 3)
+            
                 .onTapGesture {
                     withAnimation {
                         artistVM.modelDetail = artist
@@ -41,5 +47,6 @@ struct ArtistView: View {
                     }
                 }
         }
+        .padding()
     }
 }

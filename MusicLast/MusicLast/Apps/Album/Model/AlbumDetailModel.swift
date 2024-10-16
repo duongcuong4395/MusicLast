@@ -48,16 +48,20 @@ struct Track: Codable {
     var streamable: Streamable?
     var duration: Int?
     var url: String?
-    var name: String?
+    var image: [ImageModel]?
+    var name, playcount, listeners, mbid: String?
     var attr: Attr?
     var artist: ArtistClass?
 
     enum CodingKeys: String, CodingKey {
         case streamable, duration, url, name
+        case playcount, listeners, mbid
         case attr = "@attr"
-        case artist
+        case artist, image
     }
 }
+
+
 
 // MARK: - ArtistClass
 struct ArtistClass: Codable {

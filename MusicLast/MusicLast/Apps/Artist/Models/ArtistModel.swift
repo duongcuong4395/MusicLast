@@ -55,7 +55,7 @@ struct ArtistItemView: View {
             HStack {
                 Text(model.name)
                     .font(.system(size: 14, weight: .bold, design: .serif))
-                    .padding(.leading, 35)
+                    .padding(.leading, 40)
             }
             if artistDetailVM.isLoading {
                 ArtistDetailItemView(model: ArtistDetailModel()) {
@@ -64,7 +64,7 @@ struct ArtistItemView: View {
             } else {
                 if let detail = model.detail {
                     ArtistDetailItemView(model: detail, optionView: optionView)
-                        .padding(.leading, 35)
+                        .padding(.leading, 30)
                         .padding(.trailing, 5)
                         .padding(.vertical, 5)
                         .background{
@@ -88,9 +88,9 @@ struct ArtistItemView: View {
                         }
                         .resizable()
                         .scaledToFill()
-                        
                         .clipShape(Circle())
                         .frame(width: 30, height: 30)
+                        .shadow(color: .pink, radius: 5, x: 5, y: 5)
                         .onTapGesture {
                             print("=== ArtistModel", model)
                             if let url = URL(string: model.url ?? "") {
