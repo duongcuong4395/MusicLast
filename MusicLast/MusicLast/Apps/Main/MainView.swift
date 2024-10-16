@@ -47,13 +47,14 @@ struct SearchPageView: View {
     var body: some View {
         VStack {
             Text("Last.fm")
-                .font(.system(size: 20, weight: .bold, design: .serif))
+                .font(.system(size: 35, weight: .bold, design: .serif))
                 .foregroundStyle(.red)
             Text("Get your own music profile at Last.fm, the world’s largest social music platform.")
                 .font(.caption)
             TextFieldSearchView(listModels: []) {
                 print("Search text")
             }
+            Divider()
             HStack {
                 ForEach(Page.allCases, id: \.self) { page in
                     page.getItemView(isActive: pageVM.page == page)

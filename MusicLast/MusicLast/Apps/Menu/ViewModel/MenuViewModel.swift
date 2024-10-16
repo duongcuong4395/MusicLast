@@ -44,12 +44,14 @@ enum Page: String, CaseIterable {
 import SwiftUI
 extension Page {
     func getItemView(isActive: Bool = false) -> some View {
-        HStack {
+        HStack(spacing: 20) {
+            getIcon(isActive: isActive)
             Text(self.rawValue)
-                .font(isActive ? .caption.bold() : .caption)
-                .padding()
-                .background(.ultraThinMaterial.opacity(isActive ? 1 : 0), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                .font(isActive ? .callout.bold() : .callout)
         }
+        .padding(.vertical, 5)
+        .padding(.horizontal, 10)
+        .background(.ultraThinMaterial.opacity(isActive ? 1 : 0), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
     }
     
     @ViewBuilder
@@ -57,10 +59,23 @@ extension Page {
         switch self {
         case .Album:
             AlbumView()
+                .font(.caption)
         case .Artist:
             ArtistView(animation: animation)
         case .Track:
             TrackView()
+        }
+    }
+    
+    @ViewBuilder
+    func getIcon(isActive: Bool = false) -> some View {
+        switch self {
+        case .Album:
+            Image(systemName: isActive ? "magazine.fill" : "magazine")
+        case .Artist:
+            Image(systemName: isActive ? "person.2.crop.square.stack.fill" : "person.2.crop.square.stack")
+        case .Track:
+            Image(systemName: isActive ? "newspaper.fill" : "newspaper")
         }
     }
 }
