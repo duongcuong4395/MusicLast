@@ -57,33 +57,26 @@ struct ArtistItemView: View {
                     .font(.system(size: 14, weight: .bold, design: .serif))
                     .padding(.leading, 35)
             }
+            if artistDetailVM.isLoading {
+                ArtistDetailItemView(model: ArtistDetailModel()) {
+                    EmptyView().toAnyView()
+                }
+            } else {
+                if let detail = model.detail {
+                    ArtistDetailItemView(model: detail, optionView: optionView)
+                        .padding(.leading, 35)
+                        .padding(.trailing, 5)
+                        .padding(.vertical, 5)
+                        .background{
+                            RoundedRectangle(cornerRadius: 5)
+                                .foregroundStyle(.clear)
+                                .background(.ultraThinMaterial.opacity(1), in: RoundedRectangle(cornerRadius: 5.0, style: .continuous))
+                                .padding(.leading, 15)
+                        }
+                }
+            }
             
-            if let detail = model.detail {
-                ArtistDetailItemView(model: detail, optionView: optionView)
-                    .padding(.leading, 35)
-                    .padding(.trailing, 5)
-                    .padding(.vertical, 5)
-                    .background{
-                        RoundedRectangle(cornerRadius: 5)
-                            .foregroundStyle(.clear)
-                            .background(.ultraThinMaterial.opacity(1), in: RoundedRectangle(cornerRadius: 5.0, style: .continuous))
-                            .padding(.leading, 15)
-                    }
-            }
-            /*
-            if let detail = artistDetailVM.model {
-                ArtistDetailItemView(model: detail, optionView: optionView)
-                    .padding(.leading, 35)
-                    .padding(.trailing, 5)
-                    .padding(.vertical, 5)
-                    .background{
-                        RoundedRectangle(cornerRadius: 5)
-                            .foregroundStyle(.clear)
-                            .background(.ultraThinMaterial.opacity(1), in: RoundedRectangle(cornerRadius: 5.0, style: .continuous))
-                            .padding(.leading, 15)
-                    }
-            }
-            */
+            
         }
         .overlay(content: {
             VStack(alignment: .leading) {

@@ -10,7 +10,7 @@ import SwiftUI
 struct ArtistDetailView: View {
     @EnvironmentObject var artistVM: ArtistViewModel
     @EnvironmentObject var menuVM: MenuViewModel
-    
+    @StateObject var artistTopAlbumsVM = ArtistTopAlbumsViewModel()
     
     var animation: Namespace.ID
     
@@ -36,7 +36,7 @@ struct ArtistDetailView: View {
                 Image(systemName: "heart")
                     .font(.title2)
             }
-            
+            Divider()
             if let artist = artistVM.modelDetail {
                 ArtistItemView(model: artist) {
                     EmptyView().toAnyView()
@@ -45,11 +45,18 @@ struct ArtistDetailView: View {
             }
             
             // MARK: Top Album
-            
+            ListTopAlbumView()
             // MARK: Top Tracks
             
             Spacer()
             
         }
+        .onAppear{
+            if let artist = artistVM.modelDetail {
+                artistTopAlbumsVM.getTopAlbums(with: artist.name)
+            }
+            
+        }
+        .environmentObject(artistTopAlbumsVM)
     }
 }

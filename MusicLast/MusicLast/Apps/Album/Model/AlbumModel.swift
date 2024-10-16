@@ -48,6 +48,7 @@ struct AlbumModel: Codable {
     var url: String?
     var image: [ImageModel]
     var streamable, mbid: String?
+    var detail: AlbumDetailModel?
 }
 
 import SwiftUI
@@ -111,6 +112,7 @@ struct OpensearchQuery: Codable {
 
 
 struct AlbumItemView: View {
+    @EnvironmentObject var albumVM: AlbumViewModel
     @StateObject var albumDetailVM = AlbumDetailViewModel()
     
     @Environment(\.openURL) var openURL
@@ -145,14 +147,18 @@ struct AlbumItemView: View {
                     Text(model.artist)
                         .font(.caption.bold())
                 }
-                if let detail = modelDetailVM.model {
+                if let detail = model.detail {
                     AlbumDetailItemView(model: detail)
                 }
             }
             Spacer()
         }
         .onAppear{
-            modelDetailVM.getInfor(by: model.name, and: model.artist)
+            guard model.detail == nil else { return }
+            modelDetailVM.getInfor(by: model.name, and: model.artist) { obj in
+                guard let obj = obj else { return }
+                albumVM.updateDetail(at: model, by: obj)
+            }
         }
     }
 }

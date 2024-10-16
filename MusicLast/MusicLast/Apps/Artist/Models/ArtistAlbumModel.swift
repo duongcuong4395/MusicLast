@@ -31,9 +31,8 @@ struct Album: Codable {
     var url: String?
     var artist: ArtistClass?
     var image: [ImageModel]?
+    var detail: AlbumDetailModel?
 }
-
-
 
 
 

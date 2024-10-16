@@ -36,15 +36,18 @@ extension ArtistViewModel: MusicLastAPIEvent {
 
 class ArtistDetailViewModel: ObservableObject {
     @Published var model: ArtistDetailModel?
+    @Published var isLoading: Bool = false
 }
 
 extension ArtistDetailViewModel : MusicLastAPIEvent{
     func getInfor(with artist: String, completion: @escaping (ArtistDetailModel?) -> Void) {
+        self.isLoading = true
         Task {
             let response = try await self.getInforArtist(by: artist) as ArtistDetailResponse
             DispatchQueue.main.async {
                 withAnimation {
                     self.model = response.artist
+                    self.isLoading = false
                     completion(self.model)
                 }
             }
@@ -53,16 +56,23 @@ extension ArtistDetailViewModel : MusicLastAPIEvent{
 }
 
 class ArtistTopAlbumsViewModel: ObservableObject {
-    @Published var model: ArtistTopalbumsModel?
+    @Published var models: [Album] = []
 }
 
 extension ArtistTopAlbumsViewModel : MusicLastAPIEvent{
-    func getInfor(with artist: String) {
+    
+    func updateDetail(at model: Album, by item: AlbumDetailModel) {
+        if let index = models.firstIndex(where: { $0.name == model.name }) {
+            models[index].detail = item
+        }
+    }
+    
+    func getTopAlbums(with artist: String) {
         Task {
             let response = try await self.getTopAlbums(by: artist) as ArtistTopalbumsResponse
             DispatchQueue.main.async {
                 withAnimation {
-                    self.model = response.topalbums
+                    self.models = response.topalbums?.albums ?? []
                 }
             }
         }
