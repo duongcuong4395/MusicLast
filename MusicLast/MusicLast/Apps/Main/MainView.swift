@@ -30,9 +30,19 @@ struct MainView: View {
         .environmentObject(artistVM)
         .environmentObject(trackVM)
         .onChange(of: appVM.textSearch) { oldValue, newValue in
-            albumVM.search(by: appVM.textSearch)
-            artistVM.search(by: appVM.textSearch)
-            trackVM.search(by: appVM.textSearch)
+            print("== searchChange", newValue)
+            if newValue.isEmpty {
+                withAnimation(.spring()) {
+                    albumVM.models = []
+                    artistVM.models = []
+                    trackVM.models = []
+                }
+            } else {
+                albumVM.search(by: appVM.textSearch)
+                artistVM.search(by: appVM.textSearch)
+                trackVM.search(by: appVM.textSearch)
+            }
+            
         }
     }
 }
@@ -51,7 +61,7 @@ struct SearchPageView: View {
                 .foregroundStyle(.red)
             Text("Get your own music profile at Last.fm, the world’s largest social music platform.")
                 .font(.caption)
-            TextFieldSearchView(listModels: []) {
+            TextFieldSearchView(listModels: .constant([albumVM.models, artistVM.models, trackVM.models]) ) {
                 print("Search text")
             }
             Divider()
@@ -73,7 +83,7 @@ struct SearchPageView: View {
 struct TextFieldSearchView: View {
     @EnvironmentObject var appVM: AppViewModel
     
-    @State var listModels: [[Any]]
+    @Binding var listModels: [[Any]]
 
     @State var showClear: Bool = true
     
