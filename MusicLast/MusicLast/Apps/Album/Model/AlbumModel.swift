@@ -85,10 +85,13 @@ enum Size: String, Codable {
 struct Attr: Codable {
     var attrFor: String?
     var rank: Int?
+    var page, perPage, totalPages, total: String?
+    var artist: String?
     
     enum CodingKeys: String, CodingKey {
         case attrFor = "for"
         case rank = "rank"
+        case page, perPage, totalPages, total, artist
     }
 }
 

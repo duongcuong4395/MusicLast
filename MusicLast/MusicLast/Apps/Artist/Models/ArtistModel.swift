@@ -26,35 +26,40 @@ struct ArtistModel: Codable {
     var streamable: String?
     var images: [ImageModel]
     
+    var detail: ArtistDetailModel?
+    
     enum CodingKeys: String, CodingKey {
         case images = "image"
         case name, listeners, mbid, url, streamable
+        case detail
     }
 }
 
 extension ArtistModel {
     @MainActor
-    func getItemView(with optionVIew: @escaping () -> some View) -> some View {
-        ArtistItemView(model: self)
+    func getItemView(with optionView: @escaping () -> AnyView) -> some View {
+        ArtistItemView(model: self, optionView: optionView)
     }
 }
 
 struct ArtistItemView: View {
+    @EnvironmentObject var artistVM: ArtistViewModel
     @StateObject var artistDetailVM = ArtistDetailViewModel()
     @Environment(\.openURL) var openURL
     var model: ArtistModel
     
+    var optionView: () -> AnyView
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                
                 Text(model.name)
                     .font(.system(size: 14, weight: .bold, design: .serif))
                     .padding(.leading, 35)
             }
             
-            if let detail = artistDetailVM.model {
-                ArtistDetailItemView(model: detail)
+            if let detail = model.detail {
+                ArtistDetailItemView(model: detail, optionView: optionView)
                     .padding(.leading, 35)
                     .padding(.trailing, 5)
                     .padding(.vertical, 5)
@@ -65,6 +70,20 @@ struct ArtistItemView: View {
                             .padding(.leading, 15)
                     }
             }
+            /*
+            if let detail = artistDetailVM.model {
+                ArtistDetailItemView(model: detail, optionView: optionView)
+                    .padding(.leading, 35)
+                    .padding(.trailing, 5)
+                    .padding(.vertical, 5)
+                    .background{
+                        RoundedRectangle(cornerRadius: 5)
+                            .foregroundStyle(.clear)
+                            .background(.ultraThinMaterial.opacity(1), in: RoundedRectangle(cornerRadius: 5.0, style: .continuous))
+                            .padding(.leading, 15)
+                    }
+            }
+            */
         }
         .overlay(content: {
             VStack(alignment: .leading) {
@@ -92,7 +111,11 @@ struct ArtistItemView: View {
         })
         
         .onAppear{
-            artistDetailVM.getInfor(with: model.name)
+            guard model.detail == nil else { return }
+            artistDetailVM.getInfor(with: model.name) { obj in
+                guard let obj = obj else { return }
+                artistVM.updateDetail(at: model, by: obj)
+            }
         }
     }
 }

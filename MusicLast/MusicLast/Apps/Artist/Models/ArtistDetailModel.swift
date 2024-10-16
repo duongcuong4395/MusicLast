@@ -60,10 +60,12 @@ import SwiftUI
 import Kingfisher
 
 struct ArtistDetailItemView: View {
+    @EnvironmentObject var menuVM: MenuViewModel
     @Environment(\.openURL) var openURL
     var model: ArtistDetailModel
-    
     @State var toggleShowDetailInfor: Bool = false
+    
+    var optionView: () -> AnyView
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -73,47 +75,53 @@ struct ArtistDetailItemView: View {
                 Text("\(formatString(value: model.stats?.listeners ?? "") ?? "")")
                     .font(.caption.bold())
                 
-                Spacer()
-                
                 Image(systemName: "play.circle")
                     .font(.caption.bold())
                 Text("\(formatString(value: model.stats?.playcount ?? "") ?? "")")
                     .font(.caption.bold())
+                Spacer()
+                optionView()
             }
-            HStack(spacing: 5) {
-                Text("Similar To:")
-                    .font(.caption.bold())
-                ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack {
-                        ForEach(model.similar?.artist ?? [], id: \.name) { similar in
-                            VStack {
-                                
-                                KFImage(URL(string: similar.images[2].text ?? ""))
-                                    .placeholder { progress in
-                                        Circle()
-                                            .fadeInEffect(duration: 100, isLoop: true)
-                                    }
-                                    .resizable()
-                                    .scaledToFill()
+            if let similar = model.similar
+                , let artists = similar.artist
+                , artists.count > 0 {
+                HStack(spacing: 5) {
+                    Text("Similar To:")
+                        .font(.caption.bold())
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack {
+                            ForEach(artists, id: \.name) { similar in
+                                VStack {
                                     
-                                    .clipShape(Circle())
-                                    .frame(width: 30, height: 30)
-                                    .onTapGesture {
-                                        if let url = URL(string: similar.url ?? "") {
-                                            openURL(url)
+                                    KFImage(URL(string: similar.images[2].text ?? ""))
+                                        .placeholder { progress in
+                                            Circle()
+                                                .fadeInEffect(duration: 100, isLoop: true)
                                         }
-                                    }
-                                
-                                Text(similar.name)
-                                    .font(.caption2)
-                                    .frame(height: 40)
+                                        .resizable()
+                                        .scaledToFill()
+                                        
+                                        .clipShape(Circle())
+                                        .frame(width: 30, height: 30)
+                                        .onTapGesture {
+                                            if let url = URL(string: similar.url ?? "") {
+                                                openURL(url)
+                                            }
+                                        }
+                                    
+                                    Text(similar.name)
+                                        .font(.caption2)
+                                        .frame(height: 40)
+                                }
+                                .frame(width: 70)
                             }
-                            .frame(width: 70)
                         }
                     }
+                    .padding(0)
+                    .frame(height: 75)
                 }
-                .padding(0)
             }
+            
             Text("\(model.bio?.summary ?? "")")
                 .font(.caption)
                 .lineLimit(toggleShowDetailInfor ? nil : 3)

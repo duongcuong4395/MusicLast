@@ -8,13 +8,31 @@
 import Foundation
 
 enum Menu: String, CaseIterable {
-    case Album
-    case Artist
-    case Track
+    case Search
+    case ArtistDetail
+}
+
+import SwiftUI
+extension Menu {
+    @ViewBuilder
+    func getView(with animation: Namespace.ID) -> some View {
+        switch self {
+        case .Search:
+            SearchPageView(animation: animation)
+        case .ArtistDetail:
+            ArtistDetailView(animation: animation)
+        }
+    }
 }
 
 class MenuViewModel: ObservableObject {
-    @Published var menu: Menu = .Album
+    @Published var menu: Menu = .Search
+}
+
+extension MenuViewModel {
+    func switchMenu(by menu: Menu) {
+        self.menu = menu
+    }
 }
 
 enum Page: String, CaseIterable {
@@ -35,12 +53,12 @@ extension Page {
     }
     
     @ViewBuilder
-    func getView() -> some View {
+    func getView(with animation: Namespace.ID) -> some View {
         switch self {
         case .Album:
             AlbumView()
         case .Artist:
-            ArtistView()
+            ArtistView(animation: animation)
         case .Track:
             TrackView()
         }

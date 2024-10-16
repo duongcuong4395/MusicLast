@@ -13,7 +13,7 @@ class AppUtility {
     static let BaseURL = envDict["BaseURL"]! as String
     static let Key = envDict["Key"]! as String
 }
-
+    
 class AppViewModel: ObservableObject {
     @Published var textSearch: String = ""
 }

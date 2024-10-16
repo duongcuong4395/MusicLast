@@ -66,7 +66,6 @@ struct ArtistClass: Codable {
     var mbid: String?
 }
 
-
 // MARK: - Streamable
 struct Streamable: Codable {
     var fulltrack, text: String?

@@ -10,10 +10,39 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject var appVM: AppViewModel
     
+    @StateObject var menuVM = MenuViewModel()
+    
     @StateObject var pageVM = PageViewModel()
     @StateObject var albumVM = AlbumViewModel()
     @StateObject var artistVM = ArtistViewModel()
     @StateObject var trackVM = TrackViewModel()
+    
+    @Namespace private var animation
+    
+    var body: some View {
+        VStack {
+            menuVM.menu.getView(with: animation)
+        }
+        .padding()
+        .environmentObject(pageVM)
+        .environmentObject(menuVM)
+        .environmentObject(albumVM)
+        .environmentObject(artistVM)
+        .environmentObject(trackVM)
+        .onChange(of: appVM.textSearch) { oldValue, newValue in
+            albumVM.search(by: appVM.textSearch)
+            artistVM.search(by: appVM.textSearch)
+            trackVM.search(by: appVM.textSearch)
+        }
+    }
+}
+
+struct SearchPageView: View {
+    @EnvironmentObject var pageVM: PageViewModel
+    @EnvironmentObject var albumVM: AlbumViewModel
+    @EnvironmentObject var artistVM: ArtistViewModel
+    @EnvironmentObject var trackVM: TrackViewModel
+    var animation: Namespace.ID
     
     var body: some View {
         VStack {
@@ -35,16 +64,7 @@ struct MainView: View {
                         }
                 }
             }
-            pageVM.page.getView()
-        }
-        .padding()
-        .environmentObject(albumVM)
-        .environmentObject(artistVM)
-        .environmentObject(trackVM)
-        .onChange(of: appVM.textSearch) { oldValue, newValue in
-            albumVM.search(by: appVM.textSearch)
-            artistVM.search(by: appVM.textSearch)
-            trackVM.search(by: appVM.textSearch)
+            pageVM.page.getView(with: animation)
         }
     }
 }
