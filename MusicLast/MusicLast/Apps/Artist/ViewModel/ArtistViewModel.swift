@@ -24,3 +24,22 @@ extension ArtistViewModel: MusicLastAPIEvent {
         }
     }
 }
+
+
+
+class ArtistDetailViewModel: ObservableObject {
+    @Published var model: ArtistDetailModel?
+}
+
+extension ArtistDetailViewModel : MusicLastAPIEvent{
+    func getInfor(with artist: String) {
+        Task {
+            let response = try await self.getInforArtist(by: artist) as ArtistDetailResponse
+            DispatchQueue.main.async {
+                withAnimation {
+                    self.model = response.artist
+                }
+            }
+        }
+    }
+}

@@ -89,12 +89,35 @@ struct AlbumDetailItemView: View {
     var model: AlbumDetailModel
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             HStack {
+                Image(systemName: "person.wave.2.fill")
+                    .font(.caption.bold())
+                Text("\(formatString(value: model.listeners ?? "") ?? "")")
+                    .font(.caption.bold())
+                
+                Spacer()
+                
+                Image(systemName: "play.circle")
+                    .font(.caption.bold())
+                Text("\(formatString(value: model.playcount ?? "") ?? "")")
+                    .font(.caption.bold())
+            }
+            HStack {
+                Text("\(model.wiki?.summary ?? "")")
+                    .font(.caption)
+                .lineLimit(1)
+            }
+            HStack(alignment: .top) {
                 ForEach(model.tags?.tag ?? [], id: \.name) { tag in
                     Text("#\(tag.name ?? "")")
                         .font(.caption2)
                         .foregroundStyle(.blue)
+                        .onTapGesture {
+                            if let url = URL(string: tag.url ?? "") {
+                                openURL(url)
+                            }
+                        }
                 }
             }
         }

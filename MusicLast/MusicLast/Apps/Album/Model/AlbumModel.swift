@@ -129,13 +129,19 @@ struct AlbumItemView: View {
                         .font(.title2)
                 }
                 .onTapGesture {
-                    openURL(URL(string: model.url ?? "")!)
+                    if let url = URL(string: model.url ?? "") {
+                        openURL(url)
+                    }
                 }
             VStack(alignment: .leading) {
                 Text(model.name)
                     .font(.system(size: 14, weight: .bold, design: .serif))
-                Text(model.artist)
-                    .font(.caption)
+                HStack {
+                    Image(systemName: "person.crop.circle")
+                        .font(.caption.bold())
+                    Text(model.artist)
+                        .font(.caption.bold())
+                }
                 if let detail = modelDetailVM.model {
                     AlbumDetailItemView(model: detail)
                 }

@@ -24,6 +24,8 @@ enum MusicLastAPIEndPoint<T: Decodable> {
     case GetInforAlbum(artist: String, album: String)
     
     case SearchArtist(limit: Int, page: Int, artist: String)
+    case GetInforArtist(artist: String)
+    
     case SearchTrack(limit: Int, page: Int, artist: String?, track: String)
     
 }
@@ -41,6 +43,7 @@ extension MusicLastAPIEndPoint: HttpRouter {
             , .SearchArtist(limit: _, page: _, artist: _)
             , .SearchTrack(limit: _, page: _, artist: _, track: _)
             , .GetInforAlbum(artist: _, album: _)
+            , .GetInforArtist(artist: _)
             :
             "2.0/"
         }
@@ -51,7 +54,7 @@ extension MusicLastAPIEndPoint: HttpRouter {
         case .SearchAlbum(limit: _, page: _, album: _)
             , .SearchArtist(limit: _, page: _, artist: _)
             , .SearchTrack(limit: _, page: _, artist: _, track: _)
-            , .GetInforAlbum(artist: _, album: _):
+            , .GetInforAlbum(artist: _, album: _), .GetInforArtist(artist: _):
                 .get
         }
     }
@@ -66,8 +69,12 @@ extension MusicLastAPIEndPoint: HttpRouter {
             return ["limit": limit, "page": page, "method": "album.search", "album": album, "api_key": AppUtility.Key, "format": "json"]
         case .GetInforAlbum(artist: let artist, album: let album):
             return ["method": "album.getinfo", "artist": artist, "album": album, "api_key": AppUtility.Key , "format": "json"]
+            
         case .SearchArtist(limit: let limit, page: let page, artist: let artist):
             return ["limit": limit, "page": page, "method": "artist.search", "artist": artist, "api_key": AppUtility.Key, "format": "json"]
+        case .GetInforArtist(artist: let artist):
+            return ["method": "artist.getinfo", "artist": artist, "api_key": AppUtility.Key, "format": "json"]
+            
         case .SearchTrack(limit: let limit, page: let page, artist: let artist, track: let track):
             return ["limit": limit, "page": page, "method": "track.search", "album": artist, "track": track, "api_key": AppUtility.Key, "format": "json"]
         }
@@ -110,6 +117,10 @@ extension MusicLastAPIEvent {
     
     func searchArtist<T: Decodable>(with limit: Int, and page: Int, by artist: String) async throws -> T {
         return try await performRequest(for: .SearchArtist(limit: limit, page: page, artist: artist))
+    }
+    
+    func getInforArtist<T: Decodable>(by artist: String) async throws -> T {
+        return try await performRequest(for: .GetInforArtist(artist: artist))
     }
     
     func searchTrack<T: Decodable>(with limit: Int, and page: Int, by track: String, of artist: String) async throws -> T {
