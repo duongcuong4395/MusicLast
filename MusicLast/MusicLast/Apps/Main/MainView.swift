@@ -21,6 +21,29 @@ struct MainView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Text("Last.fm")
+                    .font(.system(size: 35, weight: .bold, design: .serif))
+                    .foregroundStyle(.red)
+                    .onTapGesture {
+                        guard menuVM.menu != .Search else { return }
+                        withAnimation {
+                            menuVM.menu = .Search
+                        }
+                    }
+                Spacer()
+                Image(systemName: "heart")
+                    .font(.title2)
+                appVM.dataViewStyle.itemView
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            appVM.dataViewStyle = appVM.dataViewStyle == .Grid3X3 ? .Stack : .Grid3X3
+                        }
+                    }
+            }
+            
+            Text("Get your own music profile at Last.fm, the world’s largest social music platform.")
+                .font(.caption)
             menuVM.menu.getView(with: animation)
         }
         .padding()
@@ -48,6 +71,7 @@ struct MainView: View {
 }
 
 struct SearchPageView: View {
+    @EnvironmentObject var appVM: AppViewModel
     @EnvironmentObject var pageVM: PageViewModel
     @EnvironmentObject var albumVM: AlbumViewModel
     @EnvironmentObject var artistVM: ArtistViewModel
@@ -56,11 +80,7 @@ struct SearchPageView: View {
     
     var body: some View {
         VStack {
-            Text("Last.fm")
-                .font(.system(size: 35, weight: .bold, design: .serif))
-                .foregroundStyle(.red)
-            Text("Get your own music profile at Last.fm, the world’s largest social music platform.")
-                .font(.caption)
+            
             TextFieldSearchView(listModels: .constant([albumVM.models, artistVM.models, trackVM.models]) ) {
                 print("Search text")
             }
@@ -74,6 +94,7 @@ struct SearchPageView: View {
                             }
                         }
                 }
+                
             }
             pageVM.page.getView(with: animation)
         }

@@ -88,11 +88,13 @@ struct Attr: Codable {
     var rank: Int?
     var page, perPage, totalPages, total: String?
     var artist: String?
+    var position: String?
     
     enum CodingKeys: String, CodingKey {
         case attrFor = "for"
         case rank = "rank"
         case page, perPage, totalPages, total, artist
+        case position
     }
 }
 

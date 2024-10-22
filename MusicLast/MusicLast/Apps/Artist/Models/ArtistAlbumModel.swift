@@ -29,11 +29,18 @@ struct Album: Codable {
     var playcount: Int?
     var mbid: String?
     var url: String?
-    var artist: ArtistClass?
+    var artist: Artist?
     var image: [ImageModel]?
     var detail: AlbumDetailModel?
+    var title: String?
+    var attr: Attr?
+    
+    enum CodingKeys: String, CodingKey {
+        case artist, title, mbid, url, image
+        case attr = "@attr"
+        case name, playcount, detail
+    }
 }
-
 
 
 

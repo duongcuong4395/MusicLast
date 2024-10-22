@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ListTopTrackView: View {
     @EnvironmentObject var artistTopTracksVM: ArtistTopTracksViewModel
-    
-    @State var column: [GridItem] = [GridItem(), GridItem(), GridItem()]
+    @EnvironmentObject var appVM: AppViewModel
     
     var body: some View {
         VStack {
@@ -18,19 +17,11 @@ struct ListTopTrackView: View {
                 Text("Top Tracks")
                     .font(.title3)
                 Spacer()
-                Image(systemName: self.column.count == 1 ? "square.grid.3x3" : "square.fill.text.grid.1x2")
-                    .font(.title2)
-                    .padding()
-                    .onTapGesture {
-                        withAnimation {
-                            self.column = self.column.count == 1 ? [GridItem(), GridItem(), GridItem()] : [GridItem()]
-                        }
-                    }
             }
             ScrollView(showsIndicators: false) {
-                LazyVGrid(columns: column, spacing: 5) {
+                LazyVGrid(columns: appVM.dataViewStyle.column, spacing: 5) {
                     ForEach(artistTopTracksVM.models, id: \.name) { track in
-                        TopTrackItemView(model: track, isShowMore: self.column.count == 1)
+                        TopTrackItemView(model: track)
                     }
                 }
             }
@@ -42,16 +33,15 @@ import SwiftUI
 import Kingfisher
 
 struct TopTrackItemView: View {
+    @EnvironmentObject var appVM: AppViewModel
     @EnvironmentObject var artistTopTracksVM: ArtistTopTracksViewModel
-    var model: ArtistTrackModel
-    var isShowMore: Bool = false
-    
     @StateObject var modelDetailVM = AlbumDetailViewModel()
     @Namespace var animation
+    var model: ArtistTrackModel
     
     var body: some View {
         VStack(alignment: .leading) {
-            if !isShowMore {
+            if appVM.dataViewStyle != .Stack {
                 VStack(alignment: .leading) {
                     KFImage(URL(string: model.image?[2].text ?? ""))
                         .resizable()
@@ -67,30 +57,50 @@ struct TopTrackItemView: View {
                 }
             }
             else {
-                HStack(alignment: .top) {
-                    KFImage(URL(string: model.image?[2].text ?? ""))
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .frame(width: 100, height: 100)
-                        .matchedGeometryEffect(id: "topTrack_image_\(model.name ?? "")", in: animation)
-                    VStack(alignment: .leading) {
-                        Text("\(model.name ?? "")")
-                            .font(.system(size: 14, weight: .bold, design: .serif))
-                            
-                        /*
-                        if let detail = model.detail {
-                            AlbumDetailItemView(model: detail)
-                        }
-                         */
+                
+                VStack(alignment: .leading) {
+                    Text("\(model.name ?? "")")
+                        .font(.system(size: 14, weight: .bold, design: .serif))
+                        .padding(.leading, 40)
+                    
+                    if let detail = model.trackDetail {
+                        TrackDetailItemView(track: detail, optionView: {
+                            EmptyView().toAnyView()
+                        })
+                        .padding(.leading, 30)
+                        .padding(.trailing, 5)
+                        .padding(.vertical, 5)
                     }
-                    Spacer()
                 }
+                .overlay {
+                    VStack {
+                        HStack(alignment: .top) {
+                            KFImage(URL(string: model.image?[2].text ?? ""))
+                                .placeholder { progress in
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .fadeInEffect(duration: 100, isLoop: true)
+                                }
+                                .resizable()
+                                .scaledToFill()
+                                .clipShape(Circle())
+                                .frame(width: 30, height: 30)
+                                .shadow(color: .pink, radius: 5, x: 5, y: 5)
+                            
+                                .matchedGeometryEffect(id: "topTrack_image_\(model.name ?? "")", in: animation)
+                            
+                            Spacer()
+                        }
+                        Spacer()
+                    }
+                }
+                
                 
                 
             }
         }
         .onAppear{
+            guard model.trackDetail == nil else { return }
+            artistTopTracksVM.setTrackDetail(by: model.artist?.name ?? "", and: model.name  ?? "")
             /*
             guard model.detail == nil else { return }
             modelDetailVM.getInfor(by: model.name ?? "", and: model.artist?.name ?? "") { obj in

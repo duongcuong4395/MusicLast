@@ -36,8 +36,6 @@ extension AlbumViewModel: MusicLastAPIEvent {
     }
 }
 
-
-
 class AlbumDetailViewModel: ObservableObject {
     @Published var model: AlbumDetailModel?
 }
@@ -50,7 +48,6 @@ extension AlbumDetailViewModel : MusicLastAPIEvent{
                 withAnimation {
                     self.model = response.album
                     
-                    print("=== getInfor",album, artist, response.album?.tags ?? [])
                     completion(self.model)
                 }
             }

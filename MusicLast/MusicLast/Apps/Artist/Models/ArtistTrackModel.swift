@@ -29,8 +29,10 @@ struct ArtistTrackModel: Codable {
     var image: [ImageModel]?
     var name, playcount, listeners, mbid: String?
     var attr: ArtistTrackAttr?
-    var artist: ArtistClass?
+    var artist: Artist?
 
+    var trackDetail: Track?
+    
     enum CodingKeys: String, CodingKey {
         case streamable, duration, url, name
         case playcount, listeners, mbid

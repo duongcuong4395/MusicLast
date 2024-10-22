@@ -81,6 +81,7 @@ extension ArtistTopAlbumsViewModel : MusicLastAPIEvent{
 
 class ArtistTopTracksViewModel: ObservableObject {
     @Published var models: [ArtistTrackModel] = []
+    @Published var modelTrackDetail: Track?
 }
 
 extension ArtistTopTracksViewModel: MusicLastAPIEvent {
@@ -89,6 +90,24 @@ extension ArtistTopTracksViewModel: MusicLastAPIEvent {
             let res = try await self.getTopTracks(by: artist) as ArtistTopTrackResponse
             DispatchQueue.main.async {
                 self.models = res.toptracks?.track ?? []
+            }
+        }
+    }
+    
+    func setTrackDetail(by artist: String, and track: String) {
+        Task {
+            let response = try await self.getInfoTrack(by: artist, and: track) as InfoTrackResponse
+            guard let t = response.track else { return }
+            self.setdetail(of: track, by: t)
+        }
+    }
+    
+    func setdetail(of trackName: String, by obj: Track) {
+        if let index = models.firstIndex(where: { $0.name ==  trackName}) {
+            DispatchQueue.main.async {
+                withAnimation {
+                    self.models[index].trackDetail = obj
+                }
             }
         }
     }

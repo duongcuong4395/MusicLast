@@ -25,3 +25,18 @@ extension TrackViewModel: MusicLastAPIEvent {
         }
     }
 }
+
+
+class TrackDetailViewModel: ObservableObject {
+    @Published var model: Track?
+}
+
+extension TrackDetailViewModel: MusicLastAPIEvent {
+    func getTrackDetail(by artist: String, and track: String) {
+        Task {
+            let response = try await self.getInfoTrack(by: artist, and: track) as InfoTrackResponse
+            self.model = response.track
+        }
+    }
+}
+
