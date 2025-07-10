@@ -13,7 +13,7 @@ struct AlbumDetailResponse: Codable {
     var album: AlbumDetailModel?
 }
 
-// MARK: - Album
+// MARK: - Album_Detail
 struct AlbumDetailModel: Codable {
     var artist: String?
     var mbid: String?
@@ -33,17 +33,26 @@ struct Tags: Codable {
 }
 
 // MARK: - Tag
-struct Tag: Codable {
+struct Tag: Codable, Equatable {
     var url: String?
     var name: String?
+    var count, reach: Int?
+}
+
+extension Tag {
+    func getItemView() -> some View {
+        Text ("# \(name ?? "")")
+            .font(.caption.bold())
+            .padding(.vertical, 5)
+            .padding(.horizontal, 10)
+            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+    }
 }
 
 // MARK: - Tracks
 struct Tracks: Codable {
     var track: [Track]?
 }
-
-
 
 // MARK: - Artist
 struct Artist: Codable {

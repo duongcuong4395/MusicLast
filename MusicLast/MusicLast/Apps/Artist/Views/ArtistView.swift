@@ -13,6 +13,9 @@ struct ArtistView: View {
     @EnvironmentObject var artistVM: ArtistViewModel
     
     var animation: Namespace.ID
+    
+    
+    
     var body: some View {
         VStack {
             ScrollView(showsIndicators: false) {

@@ -31,6 +31,10 @@ enum MusicLastAPIEndPoint<T: Decodable> {
     case GetInfoTrack(artist: String, track: String)
     
     case SearchTrack(limit: Int, page: Int, artist: String?, track: String)
+    case GetTopTags
+    case GetAlbums(byTag: String, andLimit: Int, ofPage: Int)
+    //https://ws.audioscrobbler.com/2.0/?method=tag.gettopalbums&tag=disco&api_key=852290aeea5b6063be21f2aaca39e52e&format=json#
+    
     
 }
 
@@ -51,6 +55,8 @@ extension MusicLastAPIEndPoint: HttpRouter {
             , .GetTopAlbums(artist: _)
             , .GetTopTracks(artist: _)
             , .GetInfoTrack(artist: _, track: _)
+            , .GetTopTags
+            , .GetAlbums(byTag: _, andLimit: _, ofPage: _)
             :
             "2.0/"
         }
@@ -64,6 +70,8 @@ extension MusicLastAPIEndPoint: HttpRouter {
             , .GetInforAlbum(artist: _, album: _), .GetInforArtist(artist: _)
             , .GetTopAlbums(artist: _), .GetTopTracks(artist: _)
             , .GetInfoTrack(artist: _, track: _)
+            , .GetTopTags
+            , .GetAlbums(byTag: _, andLimit: _, ofPage: _)
             :
                 .get
         }
@@ -76,23 +84,41 @@ extension MusicLastAPIEndPoint: HttpRouter {
     var parameters: Alamofire.Parameters? {
         switch self {
         case .SearchAlbum(limit: let limit, page: let page, album: let album):
-            return ["limit": limit, "page": page, "method": "album.search", "album": album, "api_key": AppUtility.Key, "format": "json"]
+            return ["method": "album.search",
+                    "limit": limit, "page": page, "album": album, "api_key": AppUtility.Key, "format": "json"]
         case .GetInforAlbum(artist: let artist, album: let album):
-            return ["method": "album.getinfo", "artist": artist, "album": album, "api_key": AppUtility.Key , "format": "json"]
+            return ["method": "album.getinfo",
+                    "artist": artist, "album": album, "api_key": AppUtility.Key , "format": "json"]
             
         case .SearchArtist(limit: let limit, page: let page, artist: let artist):
-            return ["limit": limit, "page": page, "method": "artist.search", "artist": artist, "api_key": AppUtility.Key, "format": "json"]
+            return ["method": "artist.search",
+                    "limit": limit, "page": page, "artist": artist, "api_key": AppUtility.Key, "format": "json"]
         case .GetInforArtist(artist: let artist):
-            return ["method": "artist.getinfo", "artist": artist, "api_key": AppUtility.Key, "format": "json"]
+            return ["method": "artist.getinfo",
+                    "artist": artist, "api_key": AppUtility.Key, "format": "json"]
         case .GetTopAlbums(artist: let artist):
-            return ["method": "artist.gettopalbums", "artist": artist, "api_key": AppUtility.Key, "format": "json"]
+            return ["method": "artist.gettopalbums",
+                    "artist": artist, "api_key": AppUtility.Key, "format": "json"]
         case .GetTopTracks(artist: let artist):
-            return ["method": "artist.gettoptracks", "artist": artist, "api_key": AppUtility.Key, "format": "json"]
-        case .GetInfoTrack(artist: let artist, track: let track):
-            return ["method": "track.getInfo", "artist": artist, "track": track, "api_key": AppUtility.Key, "format": "json"]
+            return ["method": "artist.gettoptracks",
+                    "artist": artist, "api_key": AppUtility.Key, "format": "json"]
             
+        case .GetInfoTrack(artist: let artist, track: let track):
+            return ["method": "track.getInfo",
+                    "artist": artist, "track": track, "api_key": AppUtility.Key, "format": "json"]
         case .SearchTrack(limit: let limit, page: let page, artist: let artist, track: let track):
-            return ["limit": limit, "page": page, "method": "track.search", "album": artist, "track": track, "api_key": AppUtility.Key, "format": "json"]
+            return ["method": "track.search",
+                    "limit": limit, "page": page, "album": artist, "track": track,
+                    "api_key": AppUtility.Key, "format": "json"]
+        
+            
+        case .GetTopTags:
+            return ["method": "tag.getTopTags",
+                    "format": "json", "api_key": AppUtility.Key]
+        case .GetAlbums(byTag: let tag, andLimit: let limit, ofPage: let page):
+            return ["method": "tag.gettopalbums",
+                    "tag": tag, "limit": limit, "page": page,
+                    "api_key": AppUtility.Key, "format": "json"]
         }
     }
     
@@ -100,7 +126,6 @@ extension MusicLastAPIEndPoint: HttpRouter {
         return  nil
     }
 }
-
 
 protocol MusicLastAPIEvent {}
 
@@ -148,5 +173,13 @@ extension MusicLastAPIEvent {
     
     func searchTrack<T: Decodable>(with limit: Int, and page: Int, by track: String, of artist: String) async throws -> T {
         return try await performRequest(for: .SearchTrack(limit: limit, page: page, artist: artist, track: track))
+    }
+    
+    func getTopTags<T: Decodable>() async throws -> T {
+        return try await performRequest(for: .GetTopTags)
+    }
+    
+    func getAlbums<T: Decodable>(by tag: String, and limit: Int, of page: Int) async throws -> T {
+        return try await performRequest(for: .GetAlbums(byTag: tag, andLimit: limit, ofPage: page))
     }
 }

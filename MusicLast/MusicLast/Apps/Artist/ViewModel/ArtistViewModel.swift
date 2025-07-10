@@ -55,30 +55,6 @@ extension ArtistDetailViewModel : MusicLastAPIEvent{
     }
 }
 
-class ArtistTopAlbumsViewModel: ObservableObject {
-    @Published var models: [Album] = []
-}
-
-extension ArtistTopAlbumsViewModel : MusicLastAPIEvent{
-    
-    func updateDetail(at model: Album, by item: AlbumDetailModel) {
-        if let index = models.firstIndex(where: { $0.name == model.name }) {
-            models[index].detail = item
-        }
-    }
-    
-    func getTopAlbums(with artist: String) {
-        Task {
-            let response = try await self.getTopAlbums(by: artist) as ArtistTopalbumsResponse
-            DispatchQueue.main.async {
-                withAnimation {
-                    self.models = response.topalbums?.albums ?? []
-                }
-            }
-        }
-    }
-}
-
 class ArtistTopTracksViewModel: ObservableObject {
     @Published var models: [ArtistTrackModel] = []
     @Published var modelTrackDetail: Track?

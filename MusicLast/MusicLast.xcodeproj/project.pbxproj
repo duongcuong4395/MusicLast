@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		FA2555922CBD402900A10E77 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = FA2555912CBD402900A10E77 /* Alamofire */; };
 		FA2555AA2CBD587500A10E77 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = FA2555A92CBD587500A10E77 /* Kingfisher */; };
+		FAA368F52CC7AE7100BF9CDC /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = FAA368F42CC7AE7100BF9CDC /* WrappingHStack */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA2555AA2CBD587500A10E77 /* Kingfisher in Frameworks */,
+				FAA368F52CC7AE7100BF9CDC /* WrappingHStack in Frameworks */,
 				FA2555922CBD402900A10E77 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				FA2555912CBD402900A10E77 /* Alamofire */,
 				FA2555A92CBD587500A10E77 /* Kingfisher */,
+				FAA368F42CC7AE7100BF9CDC /* WrappingHStack */,
 			);
 			productName = MusicLast;
 			productReference = FA25557A2CBD3F0A00A10E77 /* MusicLast.app */;
@@ -119,6 +122,7 @@
 			packageReferences = (
 				FA2555902CBD402900A10E77 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				FA2555A82CBD587500A10E77 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				FAA368F32CC7AE7100BF9CDC /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA25557B2CBD3F0A00A10E77 /* Products */;
@@ -387,6 +391,14 @@
 				minimumVersion = 8.1.0;
 			};
 		};
+		FAA368F32CC7AE7100BF9CDC /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ksemianov/WrappingHStack.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -399,6 +411,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FA2555A82CBD587500A10E77 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		FAA368F42CC7AE7100BF9CDC /* WrappingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FAA368F32CC7AE7100BF9CDC /* XCRemoteSwiftPackageReference "WrappingHStack" */;
+			productName = WrappingHStack;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -17,6 +17,9 @@ struct MainView: View {
     @StateObject var artistVM = ArtistViewModel()
     @StateObject var trackVM = TrackViewModel()
     
+    @StateObject var tagVM = TagViewModel()
+    
+    
     @Namespace private var animation
     
     var body: some View {
@@ -52,6 +55,7 @@ struct MainView: View {
         .environmentObject(albumVM)
         .environmentObject(artistVM)
         .environmentObject(trackVM)
+        .environmentObject(tagVM)
         .onChange(of: appVM.textSearch) { oldValue, newValue in
             print("== searchChange", newValue)
             if newValue.isEmpty {
@@ -61,11 +65,16 @@ struct MainView: View {
                     trackVM.models = []
                 }
             } else {
-                albumVM.search(by: appVM.textSearch)
-                artistVM.search(by: appVM.textSearch)
-                trackVM.search(by: appVM.textSearch)
+                withAnimation {
+                    albumVM.search(by: appVM.textSearch)
+                    artistVM.search(by: appVM.textSearch)
+                    trackVM.search(by: appVM.textSearch)
+                }
             }
             
+        }
+        .onAppear{
+            tagVM.getList()
         }
     }
 }
@@ -85,18 +94,22 @@ struct SearchPageView: View {
                 print("Search text")
             }
             Divider()
-            HStack {
-                ForEach(Page.allCases, id: \.self) { page in
-                    page.getItemView(isActive: pageVM.page == page)
-                        .onTapGesture {
-                            withAnimation {
-                                pageVM.page = page
+            if appVM.textSearch.isEmpty {
+                TopTagView()
+            } else {
+                HStack {
+                    ForEach(Page.allCases, id: \.self) { page in
+                        page.getItemView(isActive: pageVM.page == page)
+                            .onTapGesture {
+                                withAnimation {
+                                    pageVM.page = page
+                                }
                             }
-                        }
+                    }
+                    
                 }
-                
+                pageVM.page.getView(with: animation)
             }
-            pageVM.page.getView(with: animation)
         }
     }
 }

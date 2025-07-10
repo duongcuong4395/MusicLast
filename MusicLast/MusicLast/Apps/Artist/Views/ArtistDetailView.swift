@@ -10,7 +10,7 @@ import SwiftUI
 struct ArtistDetailView: View {
     @EnvironmentObject var artistVM: ArtistViewModel
     @EnvironmentObject var menuVM: MenuViewModel
-    @StateObject var artistTopAlbumsVM = ArtistTopAlbumsViewModel()
+    @EnvironmentObject var albumVM: AlbumViewModel
     @StateObject var artistTopTracksVM = ArtistTopTracksViewModel()
     var animation: Namespace.ID
     
@@ -46,7 +46,7 @@ struct ArtistDetailView: View {
                 }
                 
                 // MARK: Top Album
-                ListTopAlbumView()
+                ListAlbumView(models: albumVM.models, title: "Top Albums") {}
                     .frame(height: UIScreen.main.bounds.height/2.5)
                 // MARK: Top Tracks
                 ListTopTrackView()
@@ -57,12 +57,12 @@ struct ArtistDetailView: View {
         }
         .onAppear{
             if let artist = artistVM.modelDetail {
-                artistTopAlbumsVM.getTopAlbums(with: artist.name)
+                albumVM.getTopAlbums(with: artist.name)
                 artistTopTracksVM.getTopTracks(by: artist.name)
             }
             
         }
         .environmentObject(artistTopTracksVM)
-        .environmentObject(artistTopAlbumsVM)
+        //.environmentObject(artistTopAlbumsVM)
     }
 }

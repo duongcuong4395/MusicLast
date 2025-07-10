@@ -118,10 +118,7 @@ struct Track: Codable {
     }
 }
 
-// MARK: - Toptags
-struct Toptags: Codable {
-    var tag: [Tag]?
-}
+
 
 
 struct TrackDetailItemView: View {

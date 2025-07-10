@@ -23,24 +23,61 @@ struct ArtistTopalbumsModel: Codable {
     }
 }
 
-// MARK: - Album
-struct Album: Codable {
-    var name: String?
-    var playcount: Int?
-    var mbid: String?
-    var url: String?
-    var artist: Artist?
-    var image: [ImageModel]?
-    var detail: AlbumDetailModel?
-    var title: String?
-    var attr: Attr?
+
+
+import SwiftUI
+import Kingfisher
+
+struct AlbumItemView2: View {
+    @EnvironmentObject var albumVM: AlbumViewModel
+    @StateObject var albumDetailVM = AlbumDetailViewModel()
     
-    enum CodingKeys: String, CodingKey {
-        case artist, title, mbid, url, image
-        case attr = "@attr"
-        case name, playcount, detail
+    @Environment(\.openURL) var openURL
+    //var model: AlbumModel
+    var model: Album
+    @StateObject var modelDetailVM = AlbumDetailViewModel()
+    var body: some View {
+        HStack(alignment: .top) {
+            KFImage(URL(string: model.image[2].text ?? ""))
+                .placeholder { progress in
+                    RoundedRectangle(cornerRadius: 15)
+                        .fadeInEffect(duration: 100, isLoop: true)
+                }
+                .resizable()
+                .scaledToFill()
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .frame(width: 100, height: 100)
+                .overlay {
+                    Image(systemName: "play.circle")
+                        .font(.title2)
+                }
+                .onTapGesture {
+                    if let url = URL(string: model.url ?? "") {
+                        openURL(url)
+                    }
+                }
+            VStack(alignment: .leading) {
+                Text(model.name)
+                    .font(.system(size: 14, weight: .bold, design: .serif))
+                HStack {
+                    Image(systemName: "person.crop.circle")
+                        .font(.caption.bold())
+                    Text(model.artist.name ?? "")
+                        .font(.caption.bold())
+                }
+                if let detail = model.detail {
+                    AlbumDetailItemView(model: detail)
+                }
+            }
+            Spacer()
+        }
+        .onAppear{
+            guard model.detail == nil else { return }
+            modelDetailVM.getInfor(by: model.name, and: model.artist.name ?? "") { obj in
+                guard let obj = obj else { return }
+                albumVM.updateDetail(at: model.name, by: obj)
+            }
+        }
     }
 }
-
-
 
